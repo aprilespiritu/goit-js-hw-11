@@ -42,7 +42,7 @@ function renderGallery(hits) {
 
 async function handleSubmit(e) {
     e.preventDefault();
-    options.params.q = searchInputE.ariaValueMax.trim();
+    options.params.q = searchInputE.value.trim();
 
     if (options.params.q === "") return;
     options.params.page = 1;
