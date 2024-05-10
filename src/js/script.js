@@ -7,14 +7,19 @@ import "simplelightbox/dist/simple-lightbox.min.css";
 //Target Elements
 const galleryE = document.querySelector('.gallery');
 const searchInputE = document.querySelector('input[name="searchQuery"]');
-const searchFormE = document.querySelector("search-form");
+const searchFormE = document.getElementById("search-form");
 
 let reachEnd = false;
 let totalHits = 0;
 
+const lightbox = new simpleLightbox(".lightbox", {
+    captionsData: "alt",
+    captionDelay: 250,
+});
+
 function renderGallery(hits) {
-    hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => {
-        return `
+    let markup = hits.map(({ webformatURL, largeImageURL, tags, likes, views, comments, downloads}) => {
+            return `
                 <a href="${largeImageURL}" class='lightbox'>
                 <div class="photo-card">
                     <img src="${webformatURL}" alt="${tags}" loading="lazy" />
@@ -35,9 +40,18 @@ function renderGallery(hits) {
                 </div>
                 </a>
             `;
-        });
-    
+        })
+        .join("");
     galleryE.insertAdjacentHTML('beforeend', markup);
+
+    //end of collection
+    if (options.params.page * options.params.per_page > totalHits) {
+        if (!reachEnd) {
+            Notify.info("We're sorry, but you've reached the end of search results.");
+            reachEnd = true;
+        }
+    }
+    lightbox.refresh();
 }
 
 async function handleSubmit(e) {
