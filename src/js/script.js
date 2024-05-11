@@ -25,16 +25,20 @@ function renderGallery(hits) {
                     <img src="${webformatURL}" alt="${tags}" loading="lazy" />
                     <div class="info">
                         <p class="info-item">
-                        <b>${likes}</b>
+                        <b>Likes</b>
+                        ${likes}
                         </p>
                         <p class="info-item">
-                        <b>${views}</b>
+                        <b>Views</b>
+                        ${views}
                         </p>
                         <p class="info-item">
-                        <b>${comments}</b>
+                        <b>Comments</b>
+                        ${comments}
                         </p>
                         <p class="info-item">
-                        <b>${downloads}</b>
+                        <b>Downloads</b>
+                        ${downloads}
                         </p>
                     </div>
                 </div>
@@ -82,4 +86,23 @@ async function handleSubmit(e) {
 
 }
 
-searchFormE.addEventListener('submit', handleSubmit);
+async function loadMore() {
+    options.params.page += 1;
+    try {
+        const res = await axios.get(BASE_URL, options);
+        const hits = res.data.hits;
+        renderGallery(hits);
+    } catch (e) {
+        Notify.failure(e);
+    }
+}
+
+function handleScroll() {
+    const { scrollTop, scrollHeight, clientHeight } = document.documentElement;
+    if (scrollTop + clientHeight >= scrollHeight) {
+        loadMore();
+    }
+}
+
+searchFormE.addEventListener("submit", handleSubmit);
+window.addEventListener("scroll", handleScroll);
